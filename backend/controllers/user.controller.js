@@ -10,7 +10,7 @@ export const getUserProfile=async(req,res)=>{
         return res.status(200).json(user);
     } catch (error) {
         console.log("Error in getUserProfile: ", error.message);
-		res.status(500).json({ error: error.message });
+		return res.status(500).json({ error: error.message });
     }
 };
 
@@ -85,8 +85,10 @@ export const getSuggestedUsers =async(req,res)=>{
 
 export const updateUser=async (req,res)=>{
   const {fullName,email,username,bio,link,newPassword,currentPassword }=req.body;
-  let { profileImg, coverImg } = req.body;
+  const userId = req.user._id;
 
+  let { profileImg, coverImg } = req.body;
+    console.log(profileImg);
     try {
     let user=await User.findById(userId);
     if(!user) return res.status(400).json({ message: "User not found" });
@@ -107,18 +109,21 @@ export const updateUser=async (req,res)=>{
 
     if(profileImg){
         if(user.profileImg){
-            await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0])
+            await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
         }
-        const uploadedResponse=await cloudinary.uploader.upload(profileImg);
+        const uploadedResponse =await cloudinary.uploader.upload(profileImg);
+        console.log(uploadedResponse);
         profileImg=uploadedResponse.secure_url;
+        console.log(profileImg);
+        
     }
     if (coverImg) {
         if (user.coverImg) {
             await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
         }
 
-        const uploadedResponse = await cloudinary.uploader.upload(coverImg);
-        coverImg = uploadedResponse.secure_url;
+        const uploadedResponse  = await cloudinary.uploader.upload(coverImg);
+        coverImg = uploadedResponse .secure_url;
     }
 
 
@@ -127,8 +132,10 @@ export const updateUser=async (req,res)=>{
 	user.username = username || user.username;
 	user.bio = bio || user.bio;
 	user.link = link || user.link;
-	user.profileImg = profileImg || user.profileImg;
-	ser.coverImg = coverImg || user.coverImg;
+	user.profileImage = profileImg || user.profileImage;
+	user.coverImage = coverImg || user.coverImage;
+
+    console.log(user.profileImage);
 
     user = await user.save();
     user.password = null;
@@ -139,4 +146,26 @@ export const updateUser=async (req,res)=>{
     console.log("Error in updateUser: ", error.message);
     res.status(500).json({ error: error.message });
   }
+}
+
+export const userData=async (req,res)=>{
+    try {
+        const action= req.params.action;
+        console.log(action);
+        const userIds = req.body.userIds;
+        if (!Array.isArray(userIds)) {
+            return res.status(400).json({ error: "Invalid input. Expected an array of user IDs." });
+        }
+        const users = await User.find({ _id: { $in: userIds } }).select("-password");
+
+        if (!users.length) 
+            return res.status(404).json({ message: "No users found with the provided IDs." });
+
+        res.status(200).json(users);
+   
+        
+    } catch (error) {
+        console.log("Error in userData: ", error.message);
+        res.status(500).json({ error: error.message });
+    }
 }

@@ -1,6 +1,6 @@
 import express from "express";
 import {protectRoute} from "../middleware/protectRoute.js";
-import { getUserProfile,getSuggestedUsers ,followUnFollowUser,updateUser} from "../controllers/user.controller.js";
+import { getUserProfile,getSuggestedUsers ,followUnFollowUser,updateUser,userData} from "../controllers/user.controller.js";
 
 const router= express.Router();
 /**
@@ -87,6 +87,53 @@ router.get("/suggested",protectRoute,getSuggestedUsers);
 
 /**
  * @swagger
+ * /users/connections:
+ *   post:
+ *     summary: Get user connections
+ *     description: Fetch the list of connections (followers, following) for a user.
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: A list of user connections.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The ID of the connection.
+ *                     example: 612e14f63b6a2a45678dfc99
+ *                   name:
+ *                     type: string
+ *                     description: The name of the connection.
+ *                     example: John Doe
+ *                   profileImage:
+ *                     type: string
+ *                     description: URL of the connection's profile image.
+ *                     example: https://example.com/avatar.jpg
+ *                   location:
+ *                     type: string
+ *                     description: The location of the connection.
+ *                     example: New York, USA
+ *                   title:
+ *                     type: string
+ *                     description: The title or role of the connection.
+ *                     example: Software Developer
+ *       401:
+ *         description: Unauthorized, the user is not authenticated.
+ *       500:
+ *         description: Server error, something went wrong.
+ */
+router.post("/connections/:action",protectRoute,userData);
+
+/**
+ * @swagger
  * /users/follow/{id}:
  *   post:
  *     summary: Follow or unfollow a user by ID
@@ -132,6 +179,8 @@ router.post("/follow/:id",protectRoute,followUnFollowUser);
  *   post:
  *     summary: Update user profile
  *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -199,9 +248,30 @@ router.post("/follow/:id",protectRoute,followUnFollowUser);
  *               coverImg: "https://example.com/cover.jpg"
  *       400:
  *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *             example:
+ *               error: "Please provide both current password and new password"
  *       500:
  *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *             example:
+ *               error: "Internal Server Error"
  */
-router.post("update",protectRoute,updateUser);
+
+router.post("/update",protectRoute,updateUser);
+
+
 
 export default router;
