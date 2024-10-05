@@ -15,7 +15,7 @@ import { formatMemberSinceDate } from "../../utils/date/DateTimeUtils.js";
 import FollowingList from "../../components/common/ListFollowing";
 
 const ProfilePage = () => {
-	const [coverImg, setCoverImg] = useState("");
+	const [coverImg, setCoverImg] = useState(null);
 	const [profileImg, setProfileImg] = useState("");
 	const [feedType, setFeedType] = useState("posts");
 

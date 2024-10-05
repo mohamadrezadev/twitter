@@ -5,7 +5,9 @@ import mongoose  from "mongoose";
 //     let attempt = 0;
 //     const connectWithRetry = async () => {
 //         try {
-//             const conn = await mongoose.connect(process.env.MONGODB_URL, {
+//             const mongoUri = process.env.mongodb_Url;
+//             console.log(mongoUri);
+//             const conn = await mongoose.connect(process.env.mongodb_Url, {
 //                 connectTimeoutMS: 30000,
 //                 socketTimeoutMS: 45000,
 //             });
@@ -43,10 +45,11 @@ mongoose.connection.on('error', (err) => {
     console.error(`Mongoose connection error: ${err.message}`);
 });
 
-// Export the connection function
+
 
 const connectMongoDB=async ()=>{
     try {
+        console.log(process.env.mongodb_Url);
         const conn=await mongoose.connect(process.env.mongodb_Url,{
             connectTimeoutMS: 30000, // 30 seconds
             socketTimeoutMS: 45000

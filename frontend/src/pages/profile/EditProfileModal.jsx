@@ -13,19 +13,18 @@ const EditProfileModal = ({authUser}) => {
 	});
 
 	const {updateProfile,isUpdatingProfile}=useUpdateUserProfile()
-	const handleInputChange = (e) => {
-		const { name, value } = e.target;
-		
-		// Ensure we never set `undefined` or `null`, always default to an empty string
-		setFormData((prevData) => ({
-		  ...prevData,
-		  [name]: value || "",  // Fallback to empty string if value is undefined or null
-		}));
-	  };
-
 	// const handleInputChange = (e) => {
-	// 	setFormData({ ...formData, [e.target.name]: e.target.value });
-	// };
+	// 	const { name, value } = e.target;
+		
+	// 	setFormData((prevData) => ({
+	// 	  ...prevData,
+	// 	  [name]: value || "", 
+	// 	}));
+	//   };
+
+	const handleInputChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
 	useEffect(()=>{
 
 		if(authUser){

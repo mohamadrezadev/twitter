@@ -11,7 +11,7 @@ import postRoutes from "./routes/post.routes.js";
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-
+dotenv.config();
 
 cloudinary.config({
     
@@ -23,7 +23,7 @@ cloudinary.config({
 
 const app=express()
 const port=process.env.port || 5000;
-const __dirname = path.resolve();dotenv.config()
+const __dirname = path.resolve();
 
 const swaggerOptions = {
     swaggerDefinition: {

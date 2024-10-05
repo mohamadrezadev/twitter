@@ -1,6 +1,7 @@
 import { useMutation, useQuery ,useQueryClient} from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import useFollow from "./hooks/useFollow";
+import Following from "./Following.jsx";
 const FollowingList = ({ user }) => {
 
   const queryClient=useQueryClient();
@@ -63,39 +64,13 @@ const FollowingList = ({ user }) => {
             <p>My following .</p>
             <table className="table">
               {UserConnections?.map((user) => (
+                
                 <tbody>
-                  <tr>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle h-12 w-12">
-                            <img
-                              src={
-                                user?.profileImage || "/avatar-placeholder.png"
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold">{user.username}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <th>
-                      <button
-                        className="btn btn-outline rounded-full btn-sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          follow(user?._id);
-                        }}
-                      >
-                        {isPending && "Loading..."}
-                        {!isPending  && "Unfollow"}
-                      </button>
-                      {/* <button className="btn btn-ghost btn-xs">UnFollow</button> */}
-                    </th>
+                  <tr  key={user.id}>
+                   <Following user={user} isPending={isPending}/>
                   </tr>
-                  {console.log(user)}
+                
+                  {/* {console.log(user._id)} */}
                 </tbody>
               ))}
             </table>
@@ -110,33 +85,3 @@ const FollowingList = ({ user }) => {
 };
 
 export default FollowingList;
-{
-  /* {followingList.map((user) =>{
-     {console.log(user)}
-       <tr>
-       <td>
-         <div className="flex items-center gap-3">
-           <div className="avatar">
-             <div className="mask mask-squircle h-12 w-12">
-               <img
-                 src={ user?.profileImage || "/avatar-placeholder.png"} />
-             </div>
-           </div>
-           <div>
-             <div className="font-bold">Hart Hagerty</div>
-             <div className="text-sm opacity-50">United States</div>
-           </div>
-         </div>
-       </td>
-       <td>
-         Zemlak, Daniel and Leannon
-         <br />
-         <span className="badge badge-ghost badge-sm">Desktop Support Technician</span>
-       </td>
-       <td>Purple</td>
-       <th>
-         <button className="btn btn-ghost btn-xs">details</button>
-       </th>
-     </tr>
-   })}; */
-}
