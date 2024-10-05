@@ -7,6 +7,8 @@ const FollowingList = ({ user }) => {
   const queryClient=useQueryClient();
   const { follow, isPending } = useFollow();
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // Track if dialog is open
+  const [hasFetched, setHasFetched] = useState(false);
 
   const action = "GetFollowing";
   const {
@@ -41,18 +43,35 @@ const FollowingList = ({ user }) => {
     refetch();
   }, [refetch]);
 
-  const userIds = user?.following || [];
 
+  const openDialog = () => {
+   setIsDialogOpen(true);
+    if (!hasFetched) {
+      refetch();
+      setHasFetched(true); 
+    }
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+  };
 
   return (
     <>
-      <button
+          <button
+        className="text-slate-500 text-xs"
+        onClick={openDialog}
+      >
+        Following
+      </button>
+
+      {/* <button
         className="text-slate-500 text-xs"
         onClick={() => document.getElementById("FollowingList").showModal()}
       >
         Following
-      </button>
-      <dialog id="FollowingList" className="modal">
+      </button> */}
+      <dialog id="FollowingList" className="modal"  open={isDialogOpen}>
         <div className="modal-box border rounded-md border-gray-700 shadow-md">
           {!isLoading && !isRefetching && UserConnections?.length === 0 && (
             <p className="text-center my-4">
@@ -70,14 +89,16 @@ const FollowingList = ({ user }) => {
                    <Following user={user} isPending={isPending}/>
                   </tr>
                 
-                  {/* {console.log(user._id)} */}
                 </tbody>
               ))}
             </table>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">
-          <button className="outline-none">close</button>
+        <button className="outline-none" onClick={closeDialog}>
+            Close
+          </button>
+          {/* <button className="outline-none">close</button> */}
         </form>
       </dialog>
     </>

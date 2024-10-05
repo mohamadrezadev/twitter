@@ -7,7 +7,6 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { POSTS } from "../../utils/db/dummy.js";
 import useFollow from "../../components/common/hooks/useFollow.jsx";
 import useUpdateUserProfile from "../../components/common/hooks/useUpdateUserProfile.jsx";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -28,7 +27,7 @@ const ProfilePage = () => {
 	const queryClient=useQueryClient();
 	const {data:authUser}=useQuery({queryKey:["authUser"]});
 
-
+	const {data:myPosts}=useQuery({queryKey:["posts"]});
 
 	const {data:user,isLoading,refetch,isRefetching }=useQuery({
 		queryKey:["userProfile"],
@@ -86,7 +85,7 @@ const ProfilePage = () => {
 								</Link>
 								<div className='flex flex-col'>
 									<p className='font-bold text-lg'>{user?.fullName}</p>
-									<span className='text-sm text-slate-500'>{POSTS?.length} posts</span>
+									<span className='text-sm text-slate-500'>{myPosts?.length} posts</span>
 								</div>
 							</div>
 							{/* COVER IMG */}
@@ -164,7 +163,7 @@ const ProfilePage = () => {
 								<div className='flex flex-col'>
 									<span className='font-bold text-lg'>{user?.fullName}</span>
 									<span className='text-sm text-slate-500'>@{user?.username}</span>
-									<span className='text-sm my-1'>{user?.bio}</span>
+									<span className='text-sm my-1' dir="rtl">{user?.bio}</span>
 								</div>
 
 								<div className='flex gap-2 flex-wrap'>

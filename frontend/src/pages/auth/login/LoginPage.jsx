@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link, json } from "react-router-dom";
-
+import { Link, useNavigate, useLocation,json } from "react-router-dom";
 import XSvg from "../../../components/svgs/X";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -8,11 +7,16 @@ import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
 
 const LoginPage = () => {
+	const location = useLocation();
+	const user = location.state?.user;
+
 	const [formData, setFormData] = useState({
-		username: "",
+		username:  user?.username ||"",
 		password: "",
 	});
 	const queryClient=useQueryClient();
+	const navigate = useNavigate();
+
 	const { mutate: loginMutation,isPending,isError,error } = useMutation({
 		mutationFn:async({username,password})=>{
 			try {

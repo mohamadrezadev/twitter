@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import XSvg from "../../../components/svgs/X";
-
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import {toast} from "react-hot-toast";
 
@@ -11,6 +11,7 @@ import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 
 const SignUpPage = () => {
+	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		email: "",
 		username: "",
@@ -33,6 +34,8 @@ const SignUpPage = () => {
 				const data = await res.json();
 				if(!res.ok) throw new Error(data.message || "Failed to create account");
 
+				
+
 				console.log(data)
 				return data;
 
@@ -44,6 +47,7 @@ const SignUpPage = () => {
 		},
 		onSuccess:()=>{
 			toast.success("Account created successfully");
+			navigate("/login");
 		}
 	});
 
