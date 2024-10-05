@@ -88,7 +88,7 @@ const NotificationPage = () => {
                   <div className="w-8 rounded-full">
                     <img
                       src={
-                        notification.from.profileImg ||
+                        notification.from.profileImage ||
                         "/avatar-placeholder.png"
                       }
                     />

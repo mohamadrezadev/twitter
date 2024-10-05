@@ -1,3 +1,4 @@
+import path from "path";
 import express, { json }  from "express";
 import {v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
@@ -9,16 +10,9 @@ import connectMongoDB from "./db/connectMongoDB.js";
 import postRoutes from "./routes/post.routes.js";
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-// const cloudinary = require('cloudinary');
 
 
-dotenv.config()
-// cloudinary.v2.config({
-//   cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key:process.env.CLOUDINARY_API_KEY,
-//   api_secret:process.env.CLOUDINARY_API_SECRET,
-//   secure: true,
-// });
+
 cloudinary.config({
     
     cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
@@ -29,6 +23,7 @@ cloudinary.config({
 
 const app=express()
 const port=process.env.port || 5000;
+const __dirname = path.resolve();dotenv.config()
 
 const swaggerOptions = {
     swaggerDefinition: {
@@ -47,8 +42,10 @@ const swaggerOptions = {
     apis: ['./routes/*.js'], // Path to the API docs
   };
   
-const swaggerDocs = swaggerJSDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+if (process.env.NODE_ENV === "development") {
+  const swaggerDocs = swaggerJSDoc(swaggerOptions);
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+}
 
 app.use(express.json({limit:"5mb"}));
 app.use(express.urlencoded({ extended: true }));

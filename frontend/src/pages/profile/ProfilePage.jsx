@@ -23,7 +23,6 @@ const ProfilePage = () => {
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
 
-	const [showFollowingList, setShowFollowingList] = useState(false); // State for showing following list
 
 	const {username}=useParams();
 	const queryClient=useQueryClient();

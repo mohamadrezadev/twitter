@@ -1,15 +1,23 @@
-import {  useMutation, useQuery} from "@tanstack/react-query";
-import { useState ,useEffect} from "react";
-
+import { useMutation, useQuery ,useQueryClient} from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import useFollow from "./hooks/useFollow";
 const FollowingList = ({ user }) => {
-  const [UserConnections, setUserConnections] = useState([]);
-  const action = "GetFollowing"; 
-  const { data,isLoading,refetch,isRefetching} = useQuery({
-    queryKey:["UserConnections"],
+
+  const queryClient=useQueryClient();
+  const { follow, isPending } = useFollow();
+  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+
+  const action = "GetFollowing";
+  const {
+    data: UserConnections,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["UserConnections"],
     queryFn: async () => {
       try {
         const userIds = user?.following || [];
-        console.log("userIds",userIds);
         const res = await fetch(`/api/users/connections/${action}`, {
           method: "POsT",
           headers: {
@@ -20,17 +28,18 @@ const FollowingList = ({ user }) => {
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Something went wrong");
-        setUserConnections(data);
         return data;
-
+      
       } catch (error) {
         throw new Error(error.message);
       }
     },
-    enabled: !!user?.following, 
-    
   });
-  
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   const userIds = user?.following || [];
 
 
@@ -49,42 +58,48 @@ const FollowingList = ({ user }) => {
               This user is not following anyone.👻
             </p>
           )}
-          {UserConnections.length === 0 && (
-            <p>This user is not following anyone.</p>
-          )}
+
           <div className="overflow-x-auto">
-          <p>This user is not following anyone.</p>
+            <p>My following .</p>
             <table className="table">
-            {UserConnections.map((user) => (
-               <tbody>
-               <tr>
-                 <td>
-                   <div className="flex items-center gap-3">
-                     <div className="avatar">
-                       <div className="mask mask-squircle h-12 w-12">
-                         <img
-                           src={
-                             user?.profileImage || "/avatar-placeholder.png"
-                           }
-                         />
-                       </div>
-                     </div>
-                     <div>
-                       <div className="font-bold">{user.username}</div>
-                     </div>
-                   </div>
-                 </td>
-                 <th>
-                   <button className="btn btn-ghost btn-xs">UnFollow</button>
-                 </th>
-               </tr>
-               
-             </tbody>
+              {UserConnections?.map((user) => (
+                <tbody>
+                  <tr>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="avatar">
+                          <div className="mask mask-squircle h-12 w-12">
+                            <img
+                              src={
+                                user?.profileImage || "/avatar-placeholder.png"
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-bold">{user.username}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <th>
+                      <button
+                        className="btn btn-outline rounded-full btn-sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          follow(user?._id);
+                        }}
+                      >
+                        {isPending && "Loading..."}
+                        {!isPending  && "Unfollow"}
+                      </button>
+                      {/* <button className="btn btn-ghost btn-xs">UnFollow</button> */}
+                    </th>
+                  </tr>
+                  {console.log(user)}
+                </tbody>
               ))}
-             
             </table>
           </div>
-      
         </div>
         <form method="dialog" className="modal-backdrop">
           <button className="outline-none">close</button>
@@ -95,7 +110,8 @@ const FollowingList = ({ user }) => {
 };
 
 export default FollowingList;
-{/* {followingList.map((user) =>{
+{
+  /* {followingList.map((user) =>{
      {console.log(user)}
        <tr>
        <td>
@@ -122,4 +138,5 @@ export default FollowingList;
          <button className="btn btn-ghost btn-xs">details</button>
        </th>
      </tr>
-   })}; */}
+   })}; */
+}
